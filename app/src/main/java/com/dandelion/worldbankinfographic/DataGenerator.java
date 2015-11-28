@@ -29,9 +29,9 @@ public class DataGenerator {
             country = new Country(countryIds[i],countryNames[i],0,0,0);
             countries [i] = country;
         }
-
     }
     public Country[] getCountries(){
+
         return countries;
     }
 }

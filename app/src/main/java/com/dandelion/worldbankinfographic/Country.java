@@ -18,6 +18,7 @@ public class Country {
         unemployed2013 = unemp2013;
     }
     public void calculateAverage(){
+
         average = (unemployed2011+unemployed2012+unemployed2013)/3;
     }
     public double getAverage(){
