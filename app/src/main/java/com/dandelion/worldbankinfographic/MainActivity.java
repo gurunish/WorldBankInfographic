@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
+import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,31 +14,28 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    String data = "";
-    Spinner spinner;
+    String downloadData = "";
+    Spinner spinnerCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        spinner = (Spinner)findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                                    R.array.countries, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        BackgroundTask dataFetch = new BackgroundTask();
+        spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
+        ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
+        adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCountry.setAdapter(adapterCountry);
 
         //URL of API
-        String url = new String("");
-        dataFetch.execute(url);
+        String url = new String("http://api.worldbank.org/countries/all/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json");
+        new DownloadData().execute(url);
     }
 
     /**
      * This class executes codes in the background
      */
-    private class BackgroundTask extends AsyncTask<String,String,String> {
+    private class DownloadData extends AsyncTask<String, Integer, String> {
         private String readData(String urlName) throws IOException {
             StringBuffer buffer = new StringBuffer();
             URL url = new URL(urlName);
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             connection.setDoInput(true);
             connection.connect();
             BufferedReader in;
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
             String inputLine = in.readLine();
             while (inputLine != null) {
                 buffer.append(inputLine);
@@ -63,16 +60,17 @@ public class MainActivity extends AppCompatActivity {
                 String data = readData(urls[0]);
                 return data;
             } catch (IOException e) {
-                Log.e("BackgroundTask", "Error when downloading from URL");
+                Log.e("DownloadData", "Error when downloading from URL");
                 return "Error occurred when reading data from URL";
             }
         }
 
         protected void onPostExecute(String result) {
-            data = result;
-            Log.d("BackgroundTask", "Data has been updated");
+            downloadData = result;
+            Log.d("DownloadData", "Data has been downloaded.");
+            Toast.makeText(getApplicationContext(), "Data has been successfully downloaded", Toast.LENGTH_LONG).show();
         }
-    }
 
+    }
 
 }

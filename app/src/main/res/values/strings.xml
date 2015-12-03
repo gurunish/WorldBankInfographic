@@ -1,7 +1,9 @@
 <resources>
+
     <string name="app_name">World Bank Infographic</string>
-    <string-array name="countries">
-        <item>"Albania</item>
+
+    <string-array name="Countries">
+        <item>Albania</item>
         <item>Andorra</item>
         <item>Armenia</item>
         <item>Austria</item>
@@ -28,7 +30,7 @@
         <item>Israel</item>
         <item>Italy</item>
         <item>Kazakhstan</item>
-        '<item>Latvia</item>
+        <item>Latvia</item>
         <item>Liechtenstein</item>
         <item>Lithuania</item>
         <item>Luxembourg</item>
@@ -50,7 +52,7 @@
         <item>Switzerland</item>
         <item>Turkey</item>
         <item>Ukraine</item>
-        <item>United Kingdom</item>}
+        <item>United Kingdom</item>
     </string-array>
 
 </resources>
