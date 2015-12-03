@@ -17,6 +17,25 @@ public class MainActivity extends AppCompatActivity {
     String downloadData = "";
     Spinner spinnerCountry;
 
+    //JSON tags
+    private static final String TAG_PAGE = "page";
+    private static final String TAG_PAGES = "pages";
+    private static final String TAG_PER_PAGE = "per_page";
+    private static final String TAG_TOTAL = "total";
+    private static final String TAG_INDICATOR = "indicator";
+    private static final String TAG_INDICATOR_ID = "id";
+    private static final String TAG_INDICATOR_VALUE = "value";
+    private static final String TAG_COUNTRY = "country";
+    private static final String TAG_COUNTRY_ID = "id";
+    private static final String TAG_COUNTRY_VALUE = "value";
+    private static final String TAG_VALUE = "value";
+    private static final String TAG_DECIMAL = "decimal";
+    private static final String TAG_DATE = "date";
+
+    //private static String url = "http://api.worldbank.org/countries/all/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
+    private static String url = "http://api.worldbank.org/countries/GBR/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2013&format=json";
+    //JSONArray page = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,15 +46,15 @@ public class MainActivity extends AppCompatActivity {
         adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCountry.setAdapter(adapterCountry);
 
-        //URL of API
-        String url = new String("http://api.worldbank.org/countries/all/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json");
+        //Execute Asynctask to start JSON parsing of the URL stated above
         new DownloadData().execute(url);
     }
 
     /**
      * This class executes codes in the background
      */
-    private class DownloadData extends AsyncTask<String, Integer, String> {
+    private class DownloadData extends AsyncTask<String, Void, String> {
+
         private String readData(String urlName) throws IOException {
             StringBuffer buffer = new StringBuffer();
             URL url = new URL(urlName);
@@ -56,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected String doInBackground(String... urls) {
+
             try {
                 String data = readData(urls[0]);
                 return data;
@@ -69,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             downloadData = result;
             Log.d("DownloadData", "Data has been downloaded.");
             Toast.makeText(getApplicationContext(), "Data has been successfully downloaded", Toast.LENGTH_LONG).show();
+
         }
 
     }
