@@ -19,4 +19,13 @@ public class Country {
         return name;
     }
 
+    public String valuesToString(){
+        String output = "";
+        for (int i = 0; i < values.length; i++){
+            int x = 2013 - i;
+            output += String.valueOf(x) + ": " + values[i] + "\n";
+        }
+        return output;
+    }
+
 }

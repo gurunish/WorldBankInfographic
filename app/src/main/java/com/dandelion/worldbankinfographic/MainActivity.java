@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     double unemploymentRate[] = new double[10];
     String downloadData = "";
     Spinner spinnerCountry;
+    TextView testViewOutput;
     String url;
     Country[] countries = new Country[50];
 
@@ -41,17 +44,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        testViewOutput = (TextView)findViewById(R.id.testView);
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
         ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
         adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCountry.setAdapter(adapterCountry);
+        spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
+                testViewOutput.setText(countries[pos].valuesToString());
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing, just another required interface callback
+            }
+        });
 
-        //Execute Asynctask to start JSON parsing of the URL stated above
+        //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
         for (int i = 0; i < countryID.length; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
             new DownloadData().execute(url);
             countries[i] = new Country(countryNames[i], unemploymentRate);
-            Toast.makeText(getApplicationContext(), "Successfully downloaded data for " + countries[i].getName(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -60,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private class DownloadData extends AsyncTask<String,Double,JSONArray> {
 
-
         @Override
         protected JSONArray doInBackground(String... params) {
-            if(params.length!=1) return null;
+            if(params.length != 1){
+                return null;
+            }
             try{
                 URL url = new URL(params[0]);
                 InputStream is = url.openStream();
@@ -76,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 downloadData = output.toString();
-            }catch (Exception e){
+            }
+            catch (Exception e){
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "Error downloading data", Toast.LENGTH_LONG).show();
             }
@@ -84,26 +98,26 @@ public class MainActivity extends AppCompatActivity {
                 return new JSONArray(downloadData);
             }
             catch(Exception e){
-
             }
             return null;
         }
 
         @Override
         public void onPostExecute(JSONArray downloadData) {
-            if(downloadData!=null)
-                try{
+            if(downloadData!=null) {
+                try {
                     JSONArray countryList = downloadData.getJSONArray(1);
                     JSONObject country;
-                    for(int i = 0; i < countryList.length(); i++){
+                    for (int i = 0; i < countryList.length(); i++) {
                         country = countryList.getJSONObject(i);
                         String unemploymentString = country.getString(TAG_VALUE);
                         double unemploymentValue = Double.parseDouble(unemploymentString);
                         unemploymentRate[i] = unemploymentValue;
                     }
-                }catch (Exception e){
                 }
+                catch (Exception e) {
+                }
+            }
         }
     }
-
 }
