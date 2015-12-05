@@ -18,13 +18,27 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG_VALUE = "value";
     double unemploymentRate[] = new double[10];
     String downloadData = "";
     Spinner spinnerCountry;
     TextView testViewOutput;
-    String url;
     Country[] countries = new Country[50];
+
+    //JSON tags
+    private static final String TAG_PAGE = "page";
+    private static final String TAG_PAGES = "pages";
+    private static final String TAG_PER_PAGE = "per_page";
+    private static final String TAG_TOTAL = "total";
+    private static final String TAG_INDICATOR = "indicator";
+    private static final String TAG_INDICATOR_ID = "id";
+    private static final String TAG_INDICATOR_VALUE = "value";
+    private static final String TAG_COUNTRY = "country";
+    private static final String TAG_COUNTRY_ID = "id";
+    private static final String TAG_COUNTRY_VALUE = "value";
+    private static final String TAG_VALUE = "value";
+    private static final String TAG_DECIMAL = "decimal";
+    private static final String TAG_DATE = "date";
+
 
     private static String[] countryID = {"ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR",
             "HRV","CYP","CZE","DNK","EST","FRO","FIN","FRA","GEO","DEU","GIB","GRC","HUN","ISL","IRL","ISR",
@@ -39,16 +53,22 @@ public class MainActivity extends AppCompatActivity {
             "Romania","Russia","San Marino","Slovakia","Slovenia","Spain","Sweden","Switzerland","Turkey",
             "Ukraine","United Kingdom"};
 
+    //private static String url = "http://api.worldbank.org/countries/all/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
+    private static String url = "http://api.worldbank.org/countries/GBR/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2013&format=json";
+    //JSONArray page = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        testViewOutput = (TextView)findViewById(R.id.testView);
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
         ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
         adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCountry.setAdapter(adapterCountry);
+
+        testViewOutput = (TextView)findViewById(R.id.testView);
+
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
