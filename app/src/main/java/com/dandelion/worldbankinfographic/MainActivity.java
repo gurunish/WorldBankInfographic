@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    double unemploymentRate[] = new double[10];
+
     String downloadData = "";
     Spinner spinnerCountry;
     TextView testViewOutput;
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_VALUE = "value";
     private static final String TAG_DECIMAL = "decimal";
     private static final String TAG_DATE = "date";
+    private double unemploymentRate[];
 
 
     private static String[] countryID = {"ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR",
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray countryList = downloadData.getJSONArray(1);
                     JSONObject country;
                     for (int i = 0; i < countryList.length(); i++) {
+                        unemploymentRate = new double[10];
                         country = countryList.getJSONObject(i);
                         String unemploymentString = country.getString(TAG_VALUE);
                         double unemploymentValue = Double.parseDouble(unemploymentString);
