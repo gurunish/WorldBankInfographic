@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">World Bank Infographic</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sed.</string>
 
     <string-array name="Countries">
         <item>Albania</item>
