@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < 50; i++){
                 if (countryCode.equals(countryID[i])){
                     indexCountry = i;
-                    //Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
+                    Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
                 }
             }
 
@@ -115,11 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Catch Exception", "Error");
             }
             return null;
-        }
-
-        @Override
-        public void onPostExecute(JSONArray downloadData) {
-            // Do something
         }
     }
 
