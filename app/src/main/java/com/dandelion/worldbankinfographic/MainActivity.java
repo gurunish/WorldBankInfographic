@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 URL url = new URL(params[0]);
                 InputStream is = url.openStream();
                 DataInputStream dataInputStream = new DataInputStream(is);
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[1024];
                 int bufferLength;
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 while((bufferLength = dataInputStream.read(buffer))>0){
@@ -123,10 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < countryList.length(); i++) {
                         country = countryList.getJSONObject(i);
                         String unemploymentString = country.getString(TAG_VALUE);
-                        String doubleValue = new DecimalFormat("#0.00").format(unemploymentString);
-                        //double unemploymentValue = Double.parseDouble(unemploymentString);
-                        //String doubleValue = new DecimalFormat("#0.00").format(String.valueOf(unemploymentValue));
-                        double unemploymentValue = Double.parseDouble(doubleValue);
+                        double unemploymentValue = Double.parseDouble(unemploymentString);
 
                         unemploymentRate[i] = unemploymentValue;
                         Log.d("ARRAY OUTPUT", "unemploymentValue: " + unemploymentValue + " was successfully added to the unemploymentRate array at index: " + String.valueOf(i));
