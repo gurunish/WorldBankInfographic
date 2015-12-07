@@ -1,17 +1,17 @@
 package com.dandelion.worldbankinfographic;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.KeyEvent;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
     int adapterCount = 50;
     int testPosition = 1;
-    int initualPosition = 0;
-    String initialSelection = "Albania";
+    String testSelection = "Andorra";
 
     String guiSelection;
-    String guiPosition;
+    int guiPosition;
     Spinner guiSpinner;
     SpinnerAdapter guiSpinnerAdapter;
 
@@ -35,7 +35,23 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     public void testSpinnerSelection(){
+        MainActivity mainActivity = getActivity();
+        guiSpinner = mainActivity.spinnerCountry;
 
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                guiSpinner.requestFocus();
+                guiSpinner.setSelection(0);
+                }
+        });
 
+        this.sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+        this.sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
+        this.sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+        guiPosition = guiSpinner.getSelectedItemPosition();
+
+        assertEquals(testPosition, guiPosition);
+        //TODO: Test guiSelection == "Andorra"
     }
 }
