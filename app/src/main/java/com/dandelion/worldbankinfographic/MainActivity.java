@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             new DownloadData().execute(url);
         }
 
-        testViewOutput = (TextView)findViewById(R.id.testView);
+        //testViewOutput = (TextView)findViewById(R.id.testView);
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
         ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
         adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
-                testViewOutput.setText(countries[pos].valuesToString());
+                //testViewOutput.setText(countries[pos].valuesToString());
             }
             public void onNothingSelected(AdapterView<?> parent) {
                 // Do nothing, just another required interface callback
@@ -164,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
         chart.setHoleRadius(7);
         chart.setTransparentCircleRadius(10);
 
-//        private ArrayList<PieDataSet> getDataSet() {
-//            ArrayList<PieDataSet> dataSets = null;
+        // private ArrayList<PieDataSet> getDataSet() {
+        // ArrayList<PieDataSet> dataSets = null;
 
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
@@ -229,24 +229,24 @@ public class MainActivity extends AppCompatActivity {
         BarEntry v1e4 = new BarEntry(30.000f, 3); // Apr
         valueSet1.add(v1e4);
 
-//        ArrayList<BarEntry> valueSet2 = new ArrayList<>();
-//        BarEntry v2e1 = new BarEntry(150.000f, 0); // Jan
-//        valueSet2.add(v2e1);
-//        BarEntry v2e2 = new BarEntry(90.000f, 1); // Feb
-//        valueSet2.add(v2e2);
-//        BarEntry v2e3 = new BarEntry(120.000f, 2); // Mar
-//        valueSet2.add(v2e3);
-//        BarEntry v2e4 = new BarEntry(60.000f, 3); // Apr
-//        valueSet2.add(v2e4);
+        // ArrayList<BarEntry> valueSet2 = new ArrayList<>();
+        // BarEntry v2e1 = new BarEntry(150.000f, 0); // Jan
+        // valueSet2.add(v2e1);
+        // BarEntry v2e2 = new BarEntry(90.000f, 1); // Feb
+        // valueSet2.add(v2e2);
+        // BarEntry v2e3 = new BarEntry(120.000f, 2); // Mar
+        // valueSet2.add(v2e3);
+        // BarEntry v2e4 = new BarEntry(60.000f, 3); // Apr
+        // valueSet2.add(v2e4);
 
         BarDataSet barDataSet1 = new BarDataSet(valueSet1, "Continent");
         barDataSet1.setColor(Color.rgb(75, 201, 252));
-//        BarDataSet barDataSet2 = new BarDataSet(valueSet2, "Continent");
-//        barDataSet2.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        // BarDataSet barDataSet2 = new BarDataSet(valueSet2, "Continent");
+        // barDataSet2.setColors(ColorTemplate.VORDIPLOM_COLORS);
 
         dataSets = new ArrayList<>();
         dataSets.add(barDataSet1);
-//        dataSets.add(barDataSet2);
+        // dataSets.add(barDataSet2);
         return dataSets;
     }
 
