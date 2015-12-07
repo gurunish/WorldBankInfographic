@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Project Walk.iml" filepath="$PROJECT_DIR$/Project Walk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WorldBankInfographic.iml" filepath="$PROJECT_DIR$/WorldBankInfographic.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

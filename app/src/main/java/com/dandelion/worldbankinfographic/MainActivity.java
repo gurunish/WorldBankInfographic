@@ -1,14 +1,8 @@
 package com.dandelion.worldbankinfographic;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
-
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
@@ -18,17 +12,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    String downloadData = "";
-    Spinner spinnerCountry;
 
     public float[] yData = {12, 18};
     public String[] xData = {"men", "women"};
@@ -39,14 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
-        ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
-        adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCountry.setAdapter(adapterCountry);
-
-        //URL of API
-        String url = new String("http://api.worldbank.org/countries/all/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json");
-        new DownloadData().execute(url);
         addData();
 
         //        // Create a new ImageView
@@ -164,47 +142,6 @@ public class MainActivity extends AppCompatActivity {
         xAxis.add("2012");
         xAxis.add("2013");
         return xAxis;
-    }
-
-    /**
-     * This class executes codes in the background
-     */
-    private class DownloadData extends AsyncTask<String, Integer, String> {
-        private String readData(String urlName) throws IOException {
-            StringBuffer buffer = new StringBuffer();
-            URL url = new URL(urlName);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.connect();
-            BufferedReader in;
-            in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
-            String inputLine = in.readLine();
-            while (inputLine != null) {
-                buffer.append(inputLine);
-                inputLine = in.readLine();
-            }
-            in.close();
-            connection.disconnect();
-            return(buffer.toString());
-        }
-
-        protected String doInBackground(String... urls) {
-            try {
-                String data = readData(urls[0]);
-                return data;
-            } catch (IOException e) {
-                Log.e("DownloadData", "Error when downloading from URL");
-                return "Error occurred when reading data from URL";
-            }
-        }
-
-        protected void onPostExecute(String result) {
-            downloadData = result;
-            Log.d("DownloadData", "Data has been downloaded.");
-            Toast.makeText(getApplicationContext(), "Data has been successfully downloaded", Toast.LENGTH_LONG).show();
-        }
-
     }
 
 }
