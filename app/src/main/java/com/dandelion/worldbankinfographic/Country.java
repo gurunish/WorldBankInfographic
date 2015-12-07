@@ -11,6 +11,10 @@ public class Country {
         values = unemploymentValues;
     }
 
+    public void updateValues(double[] unemploymentValues){
+        values = unemploymentValues;
+    }
+
     public double[] getValues(){
         return values;
     }
