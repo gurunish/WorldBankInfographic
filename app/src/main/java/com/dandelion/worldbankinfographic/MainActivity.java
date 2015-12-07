@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    public double[] unemploymentRate = new double[10];
+    private double[] unemploymentRate;
     private static final String TAG_VALUE = "value";
     Country[] countries = new Country[50];
     String downloadData = "";
@@ -47,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
-            countries[i] = new Country(countryNames[i], unemploymentRate);
-            Log.d("OBJECT CREATED", "Country object created for " + countries[i].getName());
             new DownloadData().execute(url);
         }
 
@@ -69,21 +67,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class DownloadData extends AsyncTask<String,Double,JSONArray> {
-        String urlString;
-        String countryCode;
         int indexCountry;
 
         @Override
         protected JSONArray doInBackground(String... params) {
+            JSONArray updateMethod = null;
+            unemploymentRate = new double[10];
 
-            urlString = params[0];
-            countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
+            String urlString = params[0];
+            String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
             for (int i = 0; i < 50; i++){
                 if (countryCode.equals(countryID[i])){
                     indexCountry = i;
                     //Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
                 }
             }
+
+            countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
+            Log.d("OBJECT CREATED", "Country object created for " + countries[indexCountry].getName());
 
             if (params.length != 1){
                 return null;
@@ -102,12 +103,15 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (Exception e){
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Error downloading data", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error downloading data, check internet connection.", Toast.LENGTH_LONG).show();
             }
             try {
-                return new JSONArray(downloadData);
+                updateMethod = new JSONArray(downloadData);
+                updateArrays(updateMethod, indexCountry);
+                return updateMethod;
             }
             catch(Exception e){
+                e.printStackTrace();
                 Log.d("Catch Exception", "Error");
             }
             return null;
@@ -115,25 +119,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPostExecute(JSONArray downloadData) {
-            if (downloadData!=null) {
-                try {
-                    JSONArray countryList = downloadData.getJSONArray(1);
-                    JSONObject country;
-                    for (int i = 0; i < countryList.length(); i++) {
-                        country = countryList.getJSONObject(i);
-                        String unemploymentString = country.getString(TAG_VALUE);
-                        double unemploymentValue = Double.parseDouble(unemploymentString);
+            // Do something
+        }
+    }
 
-                        unemploymentRate[i] = unemploymentValue;
-                        Log.d("ARRAY OUTPUT", "unemploymentValue: " + unemploymentValue + " was successfully added to the unemploymentRate array at index: " + String.valueOf(i));
-                    }
-                    countries[indexCountry].updateValues(unemploymentRate);
-                    Log.d("OBJECT UPDATED", "Update array for " + countryNames[indexCountry]);
+    public void updateArrays(JSONArray downloadData, int indexCountry){
+        if (downloadData!=null) {
+            try {
+                JSONArray countryList = downloadData.getJSONArray(1);
+                JSONObject country;
+                for (int i = 0; i < countryList.length(); i++) {
+                    country = countryList.getJSONObject(i);
+                    String unemploymentString = country.getString(TAG_VALUE);
+                    double unemploymentValue = Double.parseDouble(unemploymentString);
+                    unemploymentRate[i] = unemploymentValue;
+                    Log.d("ARRAY OUTPUT", "unemploymentValue: " + unemploymentValue + " was successfully added to the unemploymentRate array at index: " + String.valueOf(i));
                 }
-                catch (Exception e) {
-                    Log.d("Catch Exception", "Error");
-                }
+                countries[indexCountry].updateValues(unemploymentRate);
+                Log.d("OBJECT UPDATED", "Update array for " + countryNames[indexCountry]);
+            }
+            catch (Exception e) {
+                Log.d("Catch Exception", "Error");
             }
         }
     }
+
 }
