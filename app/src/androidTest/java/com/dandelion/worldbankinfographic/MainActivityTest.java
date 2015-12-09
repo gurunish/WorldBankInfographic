@@ -8,9 +8,7 @@ import android.widget.SpinnerAdapter;
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
     int adapterCount = 50;
     int testPosition = 1;
-    String testSelection = "Andorra";
 
-    String guiSelection;
     int guiPosition;
     Spinner guiSpinner;
     SpinnerAdapter guiSpinnerAdapter;
@@ -52,6 +50,5 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         guiPosition = guiSpinner.getSelectedItemPosition();
 
         assertEquals(testPosition, guiPosition);
-        //TODO: Test guiSelection == "Andorra"
     }
 }

@@ -1,5 +1,6 @@
 package com.dandelion.worldbankinfographic;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     TextView testViewOutput;
     Spinner spinnerCountry;
     String url = "";
+    private static final String dataCache = "DATA_CACHE";
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
 
     private static String[] countryID = {"ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR",
             "HRV","CYP","CZE","DNK","EST","FRO","FIN","FRA","GEO","DEU","GIB","GRC","HUN","ISL","IRL","ISR",
@@ -57,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPref = getSharedPreferences(dataCache,0);
+        editor = sharedPref.edit();
 
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
         for (int i = 0; i < 50; i++){
@@ -83,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
     private class DownloadData extends AsyncTask<String,Double,JSONArray> {
         int indexCountry;
-
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
@@ -100,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
             countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
             Log.d("OBJECT CREATED", "Country object created for " + countries[indexCountry].getName());
-
             if (params.length != 1){
                 return null;
             }
@@ -147,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 countries[indexCountry].updateValues(unemploymentRate);
                 Log.d("OBJECT UPDATED", "Update array for " + countryNames[indexCountry]);
+                saveData(indexCountry);
             }
             catch (Exception e) {
                 Log.d("Catch Exception", "Error");
@@ -154,11 +160,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Saves data to local storage
+    public void saveData(int indexCountry){
+        editor.putString(countryNames[indexCountry], countries[indexCountry].valuesToString());
+        editor.commit();
+        Log.d("SharedPref UPDATED", "Update array for " + countryNames[indexCountry]);
+    }
 
     public void addData() {
-
         PieChart chart = (PieChart) findViewById(R.id.pieChart);
-
         chart.setDrawHoleEnabled(true);
         chart.setHoleColorTransparent(true);
         chart.setHoleRadius(7);
@@ -166,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
 
         // private ArrayList<PieDataSet> getDataSet() {
         // ArrayList<PieDataSet> dataSets = null;
-
 
         ArrayList<Entry> yVals = new ArrayList<Entry>();
         for (int i = 0; i < yData.length; i++)

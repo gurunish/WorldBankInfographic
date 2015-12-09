@@ -2,8 +2,6 @@ package com.dandelion.worldbankinfographic;
 
 import org.junit.Test;
 
-import dalvik.annotation.TestTargetClass;
-
 import static org.junit.Assert.*;
 
 /**
