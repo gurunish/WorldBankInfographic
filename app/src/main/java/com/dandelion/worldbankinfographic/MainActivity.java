@@ -1,27 +1,24 @@
 package com.dandelion.worldbankinfographic;
 
+import android.support.v7.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
+import android.graphics.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.graphics.Color;
+import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
@@ -31,7 +28,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -93,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class DownloadData extends AsyncTask<String,Double,JSONArray> {
         int indexCountry;
+
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
@@ -110,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(true){
-            //if (responseCode != 200) {
+            if (responseCode != 200) {
                 retrieveLocalData(retrieveIndex);
                 retrieveIndex++;
             }
@@ -248,15 +244,12 @@ public class MainActivity extends AppCompatActivity {
         chart.animateXY(2000, 2000);
         //chart.invalidate();
 
-
         BarChart barChart = (BarChart) findViewById(R.id.barChart);
-
         BarData data = new BarData(getXAxisValues(), getDataSet());
         barChart.setData(data);
         barChart.setDescription("");
         barChart.animateXY(2000, 2000);
         barChart.invalidate();
-
     }
 
     private ArrayList<BarDataSet> getDataSet() {
@@ -301,5 +294,4 @@ public class MainActivity extends AppCompatActivity {
         xAxis.add("2013");
         return xAxis;
     }
-
 }
