@@ -13,12 +13,6 @@ public class Country {
         stringValues = null;
     }
 
-    public Country(String countryName, String unemploymentValuesString){
-        name = countryName;
-        stringValues = unemploymentValuesString;
-        values = null;
-    }
-
     public void updateValues(double[] unemploymentValues){
         values = unemploymentValues;
     }
