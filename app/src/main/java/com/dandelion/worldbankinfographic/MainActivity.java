@@ -13,9 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import android.graphics.Color;
 import com.github.mikephil.charting.charts.BarChart;
@@ -37,9 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_VALUE = "value";
     Country[] countries = new Country[50];
     String downloadData = "";
-    TextView testViewOutput;
     Spinner spinnerCountry;
-    String url = "";
+    String url = "http://api.worldbank.org/";
     private static final String dataCache = "DATA_CACHE";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
@@ -62,24 +65,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPref = getSharedPreferences(dataCache,0);
+        sharedPref = getSharedPreferences(dataCache, 0);
         editor = sharedPref.edit();
 
-        //Retrives data from localStorage and creates Country objects of the 50 countries
-        retrieveLocalData();
-
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
-
-        /* REMOVE COMMENT AFTER IMPLEMENTING CHECK TO USE LOCAL OR FETCH INTERNET
-           CURRENTLY USING LOCAL BECAUSE IT'S FASTER
-           
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
-            new DownloadData().execute(url);
+            //checks if URL is active, if not then it will pull from SharedPrefs
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.setFollowRedirects(false);
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                Toast.makeText(getApplicationContext(), "Unable to reach server, using previously downloaded results", Toast.LENGTH_SHORT).show();
+                retrieveLocalData(i);
+            }
+            else {
+                new DownloadData().execute(url);
+            }
         }
-        */
 
-        //testViewOutput = (TextView)findViewById(R.id.testView);
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
         ArrayAdapter<CharSequence> adapterCountry = ArrayAdapter.createFromResource(this, R.array.Countries, android.R.layout.simple_spinner_item);
         adapterCountry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,10 +92,9 @@ public class MainActivity extends AppCompatActivity {
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
-                //testViewOutput.setText(countries[pos].valuesToString());
             }
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing, just another required interface callback
+                //Do nothing, just another required interface callback
             }
         });
         addData();
@@ -170,17 +174,20 @@ public class MainActivity extends AppCompatActivity {
 
     //Saves data to local storage
     public void saveData(int indexCountry){
-        editor.putString(countryNames[indexCountry], countries[indexCountry].valuesToString());
+        editor.putString(countryNames[indexCountry], countries[indexCountry].getStringValues());
         editor.commit();
         Log.d("SharedPref UPDATED", "Update array for " + countryNames[indexCountry]);
     }
 
-    public void retrieveLocalData(){
-        for(int i=0 ; i< countryID.length; i++){
-            String tempValues = sharedPref.getString(countryNames[i],"");
-            countries[i] = new Country(countryNames[i], tempValues);
-            Log.d("retrieveLocalData", countryNames[i] + " was created ");
+    public void retrieveLocalData(int index){
+        String tempValues = sharedPref.getString(countryNames[index],"");
+        String[] splitString = tempValues.split(",");
+        double[] doubleString = new double[splitString.length];
+        for(int i = 0 ; i < doubleString.length; i++){
+            doubleString[i] = Double.parseDouble(splitString[i]);
         }
+        countries[index] = new Country(countryNames[index], doubleString);
+        Log.d("retrieveLocalData", countryNames[index] + " was created.");
     }
 
     public void addData() {

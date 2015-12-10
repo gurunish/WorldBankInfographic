@@ -28,7 +28,11 @@ public class Country {
     }
 
     public String getStringValues(){
-        return stringValues;
+        String temp = "";
+        for(double d: values){
+            temp+= d + ",";
+        }
+        return temp;
     }
 
     public String getName(){
