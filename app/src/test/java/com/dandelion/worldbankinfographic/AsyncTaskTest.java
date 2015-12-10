@@ -62,27 +62,29 @@ public class AsyncTaskTest {
             "Romania", "Russia", "San Marino", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey",
             "Ukraine", "United Kingdom"};
 
+    @Test
     public void testUpdateArrays() {
         if (testDownloadData != null) {
             try {
                 int indexCountry = 0;
+                double unemploymentValue;
                 JSONArray testJSONArray = new JSONArray(testDownloadData);
                 JSONArray countryList = testJSONArray.getJSONArray(1);
                 JSONObject country;
-                for (int i = 0; i < countryList.length(); i++) {
-                    country = countryList.getJSONObject(i);
-                    String unemploymentString = country.getString(TAG_VALUE);
-                    double unemploymentValue = Double.parseDouble(unemploymentString);
-                    unemploymentRate[i] = unemploymentValue;
-                }
+
+                country = countryList.getJSONObject(indexCountry);
+                String unemploymentString = country.getString(TAG_VALUE);
+                unemploymentValue = Double.parseDouble(unemploymentString);
+                unemploymentRate[indexCountry] = unemploymentValue;
                 countries[indexCountry].updateValues(unemploymentRate);
+
+                assertEquals(countries[indexCountry].getValues(), unemploymentValue);
             } catch (Exception e) {
-                Log.d("Catch Exception", "Error");
             }
         }
     }
 
-    final AsyncTask<String, Double, JSONArray> myTask = new AsyncTask<String, Double, JSONArray>() {
+    /*final AsyncTask<String, Double, JSONArray> myTask = new AsyncTask<String, Double, JSONArray>() {
         int indexCountry = 0;
         @Override
         protected JSONArray doInBackground(String... params) {
@@ -117,15 +119,8 @@ public class AsyncTaskTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try {
-                updateMethod = new JSONArray(downloadData);
-                //testUpdateArrays(updateMethod, indexCountry);
-                return updateMethod;
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("Catch Exception", "Error");
-            }
             return null;
         }
     };
+    */
 }
