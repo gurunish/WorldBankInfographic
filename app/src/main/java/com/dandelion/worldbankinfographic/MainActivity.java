@@ -1,27 +1,24 @@
 package com.dandelion.worldbankinfographic;
 
+import android.support.v7.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
+import android.graphics.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.graphics.Color;
+import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
@@ -31,7 +28,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String dataCache = "DATA_CACHE";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private int retrieveIndex;
 
     private static String[] countryID = {"ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR",
             "HRV","CYP","CZE","DNK","EST","FRO","FIN","FRA","GEO","DEU","GIB","GRC","HUN","ISL","IRL","ISR",
@@ -71,11 +68,13 @@ public class MainActivity extends AppCompatActivity {
         //Retrives data from localStorage and creates Country objects of the 50 countries
         //retrieveLocalData();
 
+        retrieveIndex = 0;
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
 
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
             new DownloadData().execute(url);
+
         }
 
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
@@ -84,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         spinnerCountry.setAdapter(adapterCountry);
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
             }
             public void onNothingSelected(AdapterView<?> parent) {
                 //Do nothing, just another required interface callback
@@ -95,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class DownloadData extends AsyncTask<String,Double,JSONArray> {
         int indexCountry;
+
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
@@ -113,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (responseCode != 200) {
-                Toast.makeText(getApplicationContext(), "Unable to reach server, using previously downloaded results", Toast.LENGTH_SHORT).show();
-                retrieveLocalData(indexCountry);
+                retrieveLocalData(retrieveIndex);
+                retrieveIndex++;
             }
             else {
                 String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
@@ -185,18 +184,21 @@ public class MainActivity extends AppCompatActivity {
     public void saveData(int indexCountry){
         editor.putString(countryNames[indexCountry], countries[indexCountry].getStringValues());
         editor.commit();
-        Log.d("SharedPref UPDATED", "Update array for " + countryNames[indexCountry]);
+        Log.d("saveData", countryNames[indexCountry] + "|" + countries[indexCountry].getStringValues());
     }
 
     public void retrieveLocalData(int index){
         String tempValues = sharedPref.getString(countryNames[index],"");
-        String[] splitString = tempValues.split(",");
-        double[] doubleString = new double[splitString.length];
-        for(int i = 0 ; i < doubleString.length; i++){
-            doubleString[i] = Double.parseDouble(splitString[i]);
+        if(tempValues.length() >0){
+            Log.d("retrieveLocalData", countryNames[index] + " | " +tempValues);
+            String[] splitString = tempValues.split(",");
+            double[] doubleString = new double[splitString.length];
+            for(int i = 0 ; i < doubleString.length; i++){
+                doubleString[i] = Double.parseDouble(splitString[i]);
+            }
+            countries[index] = new Country(countryNames[index], doubleString);
+            Log.d("retrieveLocalData", countryNames[index] + " class was retrieved and created");
         }
-        countries[index] = new Country(countryNames[index], doubleString);
-        Log.d("retrieveLocalData", countryNames[index] + " was created.");
     }
 
     public void addData() {
@@ -246,15 +248,12 @@ public class MainActivity extends AppCompatActivity {
         chart.animateXY(2000, 2000);
         //chart.invalidate();
 
-
         BarChart barChart = (BarChart) findViewById(R.id.barChart);
-
         BarData data = new BarData(getXAxisValues(), getDataSet());
         barChart.setData(data);
         barChart.setDescription("");
         barChart.animateXY(2000, 2000);
         barChart.invalidate();
-
     }
 
     private ArrayList<BarDataSet> getDataSet() {
@@ -299,5 +298,4 @@ public class MainActivity extends AppCompatActivity {
         xAxis.add("2013");
         return xAxis;
     }
-
 }

@@ -26,7 +26,7 @@ public class Country {
         for(double d: values){
             temp+= d + ",";
         }
-        return temp;
+        return temp.substring(0, temp.length()-1);
     }
 
     public String getName(){
