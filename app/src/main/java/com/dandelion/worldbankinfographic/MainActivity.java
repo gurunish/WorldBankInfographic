@@ -71,18 +71,7 @@ public class MainActivity extends AppCompatActivity {
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
-            //checks if URL is active, if not then it will pull from SharedPrefs
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.setFollowRedirects(false);
-            int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
-                Toast.makeText(getApplicationContext(), "Unable to reach server, using previously downloaded results", Toast.LENGTH_SHORT).show();
-                retrieveLocalData(i);
-            }
-            else {
-                new DownloadData().execute(url);
-            }
+            new DownloadData().execute(url);
         }
 
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
@@ -106,45 +95,61 @@ public class MainActivity extends AppCompatActivity {
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
             unemploymentRate = new double[10];
-
             String urlString = params[0];
-            String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
-            for (int i = 0; i < 50; i++){
-                if (countryCode.equals(countryID[i])){
-                    indexCountry = i;
-                    Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
-                }
-            }
+            int responseCode = 0;
 
-            countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
-            Log.d("OBJECT CREATED", "Country object created for " + countries[indexCountry].getName());
-            if (params.length != 1){
-                return null;
-            }
-            try{
-                URL url = new URL(params[0]);
-                InputStream is = url.openStream();
-                DataInputStream dataInputStream = new DataInputStream(is);
-                byte[] buffer = new byte[1024];
-                int bufferLength;
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                while((bufferLength = dataInputStream.read(buffer))>0){
-                    output.write(buffer,0,bufferLength);
-                }
-                downloadData = output.toString();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Error downloading data, check internet connection.", Toast.LENGTH_LONG).show();
-            }
+            //checks if URL is active, if not then it will pull from SharedPrefs
+            HttpURLConnection connection = null;
             try {
-                updateMethod = new JSONArray(downloadData);
-                updateArrays(updateMethod, indexCountry);
-                return updateMethod;
-            }
-            catch(Exception e){
+                connection = (HttpURLConnection) new URL(urlString).openConnection();
+                connection.setRequestMethod("HEAD");
+                connection.setFollowRedirects(false);
+                responseCode = connection.getResponseCode();
+            } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("Catch Exception", "Error");
+            }
+            if (responseCode != 200) {
+                Toast.makeText(getApplicationContext(), "Unable to reach server, using previously downloaded results", Toast.LENGTH_SHORT).show();
+                retrieveLocalData(indexCountry);
+            }
+            else {
+                String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
+                for (int i = 0; i < 50; i++){
+                    if (countryCode.equals(countryID[i])){
+                        indexCountry = i;
+                        Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
+                    }
+                }
+
+                countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
+                Log.d("OBJECT CREATED", "Country object created for " + countries[indexCountry].getName());
+                if (params.length != 1){
+                    return null;
+                }
+                try{
+                    URL url = new URL(params[0]);
+                    InputStream is = url.openStream();
+                    DataInputStream dataInputStream = new DataInputStream(is);
+                    byte[] buffer = new byte[1024];
+                    int bufferLength;
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    while((bufferLength = dataInputStream.read(buffer))>0){
+                        output.write(buffer,0,bufferLength);
+                    }
+                    downloadData = output.toString();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                try {
+                    updateMethod = new JSONArray(downloadData);
+                    updateArrays(updateMethod, indexCountry);
+                    return updateMethod;
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    Log.d("Catch Exception", "Error");
+                }
             }
             return null;
         }
