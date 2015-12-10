@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String dataCache = "DATA_CACHE";
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private int retrieveIndex;
 
     private static String[] countryID = {"ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR",
             "HRV","CYP","CZE","DNK","EST","FRO","FIN","FRA","GEO","DEU","GIB","GRC","HUN","ISL","IRL","ISR",
@@ -68,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(dataCache, 0);
         editor = sharedPref.edit();
 
+        retrieveIndex = 0;
         //Execute Asynctask to start JSON parsing of the 50 URLs of EU countries we chose
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
             new DownloadData().execute(url);
+            retrieveIndex++;
         }
 
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
@@ -80,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         spinnerCountry.setAdapter(adapterCountry);
         spinnerCountry.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Toast.makeText(getApplicationContext(), countries[pos].getName() + " was selected from the spinner.", Toast.LENGTH_SHORT).show();
             }
             public void onNothingSelected(AdapterView<?> parent) {
                 //Do nothing, just another required interface callback
@@ -108,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (responseCode != 200) {
-                Toast.makeText(getApplicationContext(), "Unable to reach server, using previously downloaded results", Toast.LENGTH_SHORT).show();
-                retrieveLocalData(indexCountry);
+            if(true){
+            //if (responseCode != 200) {
+                retrieveLocalData(retrieveIndex);
             }
             else {
                 String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
@@ -181,11 +183,12 @@ public class MainActivity extends AppCompatActivity {
     public void saveData(int indexCountry){
         editor.putString(countryNames[indexCountry], countries[indexCountry].getStringValues());
         editor.commit();
-        Log.d("SharedPref UPDATED", "Update array for " + countryNames[indexCountry]);
+        Log.d("saveData", countryNames[indexCountry] + "|" + countries[indexCountry].getStringValues());
     }
 
     public void retrieveLocalData(int index){
         String tempValues = sharedPref.getString(countryNames[index],"");
+        Log.d("retrieveLocalData", countryNames[index] + " | " +tempValues);
         String[] splitString = tempValues.split(",");
         double[] doubleString = new double[splitString.length];
         for(int i = 0 ; i < doubleString.length; i++){
