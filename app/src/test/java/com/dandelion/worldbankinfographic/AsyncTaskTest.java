@@ -20,7 +20,6 @@ public class AsyncTaskTest {
     Country[] countries = new Country[50];
     double[] unemploymentRate;
     private static final String TAG_VALUE = "value";
-    final CountDownLatch signal = new CountDownLatch(1);
 
     String testDownloadData ="[{\"page\":1,\"pages\":1,\"per_page\":\"3000\",\"total\":10}," +
             "[{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total labor force)" +
@@ -63,9 +62,10 @@ public class AsyncTaskTest {
             "Romania", "Russia", "San Marino", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey",
             "Ukraine", "United Kingdom"};
 
-    public void testUpdateArrays(JSONArray downloadData, int indexCountry) {
+    public void testUpdateArrays() {
         if (testDownloadData != null) {
             try {
+                int indexCountry = 0;
                 JSONArray testJSONArray = new JSONArray(testDownloadData);
                 JSONArray countryList = testJSONArray.getJSONArray(1);
                 JSONObject country;
@@ -83,8 +83,7 @@ public class AsyncTaskTest {
     }
 
     final AsyncTask<String, Double, JSONArray> myTask = new AsyncTask<String, Double, JSONArray>() {
-        int indexCountry;
-
+        int indexCountry = 0;
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
@@ -120,7 +119,7 @@ public class AsyncTaskTest {
             }
             try {
                 updateMethod = new JSONArray(downloadData);
-                testUpdateArrays(updateMethod, indexCountry);
+                //testUpdateArrays(updateMethod, indexCountry);
                 return updateMethod;
             } catch (Exception e) {
                 e.printStackTrace();

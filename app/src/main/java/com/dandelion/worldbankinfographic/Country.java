@@ -10,11 +10,13 @@ public class Country {
     public Country(String countryName, double[] unemploymentValues){
         name = countryName;
         values = unemploymentValues;
+        stringValues = null;
     }
 
     public Country(String countryName, String unemploymentValuesString){
         name = countryName;
         stringValues = unemploymentValuesString;
+        values = null;
     }
 
     public void updateValues(double[] unemploymentValues){
@@ -23,6 +25,10 @@ public class Country {
 
     public double[] getValues(){
         return values;
+    }
+
+    public String getStringValues(){
+        return stringValues;
     }
 
     public String getName(){
