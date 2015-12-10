@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
             new DownloadData().execute(url);
-            retrieveIndex++;
+
         }
 
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             if(true){
             //if (responseCode != 200) {
                 retrieveLocalData(retrieveIndex);
+                retrieveIndex++;
             }
             else {
                 String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
@@ -188,14 +189,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void retrieveLocalData(int index){
         String tempValues = sharedPref.getString(countryNames[index],"");
-        Log.d("retrieveLocalData", countryNames[index] + " | " +tempValues);
-        String[] splitString = tempValues.split(",");
-        double[] doubleString = new double[splitString.length];
-        for(int i = 0 ; i < doubleString.length; i++){
-            doubleString[i] = Double.parseDouble(splitString[i]);
+        if(tempValues.length() >0){
+            Log.d("retrieveLocalData", countryNames[index] + " | " +tempValues);
+            String[] splitString = tempValues.split(",");
+            double[] doubleString = new double[splitString.length];
+            for(int i = 0 ; i < doubleString.length; i++){
+                doubleString[i] = Double.parseDouble(splitString[i]);
+            }
+            countries[index] = new Country(countryNames[index], doubleString);
+            Log.d("retrieveLocalData", countryNames[index] + " class was retrieved and created");
         }
-        countries[index] = new Country(countryNames[index], doubleString);
-        Log.d("retrieveLocalData", countryNames[index] + " was created.");
     }
 
     public void addData() {
