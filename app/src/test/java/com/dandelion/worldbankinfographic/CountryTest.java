@@ -9,9 +9,11 @@ import static org.junit.Assert.*;
  */
 public class CountryTest {
 
-    double[] values = new double[4];
     String tempName = "name";
-    Country tempAPI = new Country(tempName, values);
+    double[] values = new double[10];
+    double[] valuesF = new double[10];
+    double[] valuesM = new double[10];
+    Country tempAPI = new Country(tempName, values, valuesF, valuesM);
 
     @Test
     public void testGetName() throws Exception{
@@ -39,4 +41,20 @@ public class CountryTest {
         }
         assertEquals(tempAPI.valuesToString(), tempOutput);
     }
+
+    @Test
+    public void getValues(){
+        assertEquals(values, tempAPI.getValues());
+    }
+
+    @Test
+    public void getValuesF(){
+        assertEquals(valuesF, tempAPI.getValuesF());
+    }
+
+    @Test
+    public void getValuesM(){
+        assertEquals(valuesM, tempAPI.getValuesM());
+    }
+
 }

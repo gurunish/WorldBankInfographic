@@ -999,7 +999,6 @@ public class MainActivity extends AppCompatActivity {
 
         LineChart lineChart = (LineChart) findViewById(R.id.lineChart);
 
-        //
         LineData data = new LineData(getXAxisValues(), getDataSet(a13, b12, c11, d10));
         lineChart.setData(data);
         lineChart.setDescription("");

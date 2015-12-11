@@ -17,6 +17,8 @@ public class AsyncTaskTest {
     String downloadData = "";
     Country[] countries = new Country[50];
     double[] unemploymentRate;
+    double[] valuesF;
+    double[] valuesM;
     private static final String TAG_VALUE = "value";
     int retrieveIndex = 0;
 
@@ -82,7 +84,7 @@ public class AsyncTaskTest {
                     }
                 }
                 indexCountry = 0;
-                countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
+                countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate, valuesF, valuesM);
 
                 if (params.length != 1){
                     return null;
@@ -102,7 +104,6 @@ public class AsyncTaskTest {
             return null;
         }
     };
-
 
     /*
 
