@@ -30,9 +30,15 @@ public class Country {
     }
 
 
-    public double[] getValues(){return values;}
-    public double[] getValuesF(){return valuesF;}
-    public double[] getValuesM(){return valuesM;}
+    public double[] getValues(){
+        return values;
+    }
+    public double[] getValuesF(){
+        return valuesF;
+    }
+    public double[] getValuesM(){
+        return valuesM;
+    }
 
 
     public String getName(){
@@ -65,12 +71,24 @@ public class Country {
         return output;
     }
 
-    public void setStandardDataStored(){ standardDataStored = true;}
-    public void setFemaleDataStored(){ femaleDataStored = true;}
-    public void setMaleDataStored(){ maleDataStored = true;}
+    public void setStandardDataStored(){
+        standardDataStored = true;
+    }
+    public void setFemaleDataStored(){
+        femaleDataStored = true;
+    }
+    public void setMaleDataStored(){
+        maleDataStored = true;
+    }
 
-    public boolean getStandardDataStored(){ return standardDataStored;}
-    public boolean getFemaleDataStored(){ return femaleDataStored;}
-    public boolean getMaleDataStored(){ return maleDataStored;}
+    public boolean getStandardDataStored(){
+        return standardDataStored;
+    }
+    public boolean getFemaleDataStored(){
+        return femaleDataStored;
+    }
+    public boolean getMaleDataStored(){
+        return maleDataStored;
+    }
 
 }

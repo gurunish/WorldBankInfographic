@@ -1,5 +1,6 @@
 package com.dandelion.worldbankinfographic;
 
+import android.support.v7.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,8 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,14 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.graphics.Color;
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarEntry;
@@ -46,7 +46,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -1086,7 +1085,7 @@ public class MainActivity extends AppCompatActivity {
 
                     return false;
 
-                //selects country and changes data sources
+                    //selects country and changes data sources
                 } else {
                     for (int i = 0; i < countryImgID.size(); i++) {
                         if (countryImgID.get(i).equals(v.getId())) {
@@ -1109,12 +1108,12 @@ public class MainActivity extends AppCompatActivity {
 
                                     //sets graph contents
                                     addData(
-                                        (float) countries[j].getValuesM()[0],
-                                        (float) countries[j].getValuesF()[0],
-                                        (float) countries[j].getValues()[3],
-                                        (float) countries[j].getValues()[2],
-                                        (float) countries[j].getValues()[1],
-                                        (float) countries[j].getValues()[0]
+                                            (float) countries[j].getValuesM()[0],
+                                            (float) countries[j].getValuesF()[0],
+                                            (float) countries[j].getValues()[3],
+                                            (float) countries[j].getValues()[2],
+                                            (float) countries[j].getValues()[1],
+                                            (float) countries[j].getValues()[0]
                                     );
                                     break;
                                 }
