@@ -1,51 +1,42 @@
 <resources>
 
     <string name="app_name">World Bank Infographic</string>
-    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sed.</string>
 
     <string-array name="Countries">
+        <item>Choose Country</item>
         <item>Albania</item>
-        <item>Andorra</item>
         <item>Armenia</item>
         <item>Austria</item>
         <item>Azerbaijan</item>
         <item>Belarus</item>
         <item>Belgium</item>
-        <item>Bosnia and Herzegovina</item>
+        <item>"Bosnia &amp; Herzegovina"</item>
         <item>Bulgaria</item>
         <item>Croatia</item>
-        <item>Cyprus</item>
         <item>Czech Republic</item>
         <item>Denmark</item>
         <item>Estonia</item>
-        <item>Faroe Islands</item>
         <item>Finland</item>
         <item>France</item>
         <item>Georgia</item>
         <item>Germany</item>
-        <item>Gibraltar</item>
         <item>Greece</item>
         <item>Hungary</item>
         <item>Iceland</item>
         <item>Ireland</item>
-        <item>Israel</item>
         <item>Italy</item>
-        <item>Kazakhstan</item>
         <item>Latvia</item>
-        <item>Liechtenstein</item>
         <item>Lithuania</item>
         <item>Luxembourg</item>
         <item>Macedonia</item>
-        <item>Malta</item>
         <item>Moldova</item>
-        <item>Monaco</item>
         <item>Netherlands</item>
         <item>Norway</item>
         <item>Poland</item>
         <item>Portugal</item>
         <item>Romania</item>
         <item>Russia</item>
-        <item>San Marino</item>
+        <item>Serbia</item>
         <item>Slovakia</item>
         <item>Slovenia</item>
         <item>Spain</item>
