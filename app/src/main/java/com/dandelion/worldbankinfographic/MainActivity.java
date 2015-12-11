@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 50; i++){
             url = "http://api.worldbank.org/countries/" + countryID[i] + "/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
             new DownloadData().execute(url);
-
         }
 
         spinnerCountry = (Spinner)findViewById(R.id.countrySpinner);

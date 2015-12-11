@@ -7,47 +7,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.net.URL;
+import java.net.HttpURLConnection;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.*;
 
 public class AsyncTaskTest {
+    final CountDownLatch signal = new CountDownLatch(1);
     String downloadData = "";
     Country[] countries = new Country[50];
     double[] unemploymentRate;
     private static final String TAG_VALUE = "value";
+    int retrieveIndex = 0;
 
-    String testDownloadData ="[{\"page\":1,\"pages\":1,\"per_page\":\"3000\",\"total\":10}," +
-            "[{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total labor force)" +
-            " (modeled ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\":\"16.2000007629395\"," +
-            "\"decimal\":\"1\",\"date\":\"2013\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\"" +
-            ":\"Unemployment, total (% of total labor force) (modeled ILO estimate)\"},\"country\":{\"id" +
-            "\":\"AM\",\"value\":\"Armenia\"},\"value\":\"17.2999992370605\",\"decimal\":\"1\",\"date\":" +
-            "\"2012\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of " +
-            "total labor force) (modeled ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia" +
-            "\"},\"value\":\"18.3999996185303\",\"decimal\":\"1\",\"date\":\"2011\"},{\"indicator\":{\"id" +
-            "\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total labor force) (modeled ILO estimate)" +
-            "\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\":\"19\",\"decimal\":\"1\",\"" +
-            "date\":\"2010\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total " +
-            "(% of total labor force) (modeled ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"" +
-            "Armenia\"},\"value\":\"18.7000007629395\",\"decimal\":\"1\",\"date\":\"2009\"},{\"indicator\"" +
-            ":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total labor force) (modeled " +
-            "ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\":\"16.399999618530" +
-            "3\",\"decimal\":\"1\",\"date\":\"2008\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\"" +
-            ":\"Unemployment, total (% of total labor force) (modeled ILO estimate)\"},\"country\":{\"id\":" +
-            "\"AM\",\"value\":\"Armenia\"},\"value\":\"28.3999996185303\",\"decimal\":\"1\",\"date\":\"2007\"" +
-            "},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total labor " +
-            "force) (modeled ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\":\"" +
-            "28.6000003814697\",\"decimal\":\"1\",\"date\":\"2006\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\"" +
-            ",\"value\":\"Unemployment, total (% of total labor force) (modeled ILO estimate)\"},\"country\":" +
-            "{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\":\"27.7999992370605\",\"decimal\":\"1\",\"date\"" +
-            ":\"2005\"},{\"indicator\":{\"id\":\"SL.UEM.TOTL.ZS\",\"value\":\"Unemployment, total (% of total " +
-            "labor force) (modeled ILO estimate)\"},\"country\":{\"id\":\"AM\",\"value\":\"Armenia\"},\"value\"" +
-            ":\"33.5999984741211\",\"decimal\":\"1\",\"date\":\"2004\"}]]";
+    String testDownloadData = "Temp string";
 
     private static String[] countryID = {"ALB", "AND", "ARM", "AUT", "AZE", "BLR", "BEL", "BIH", "BGR",
             "HRV", "CYP", "CZE", "DNK", "EST", "FRO", "FIN", "FRA", "GEO", "DEU", "GIB", "GRC", "HUN", "ISL", "IRL", "ISR",
@@ -84,43 +57,63 @@ public class AsyncTaskTest {
         }
     }
 
-    /*final AsyncTask<String, Double, JSONArray> myTask = new AsyncTask<String, Double, JSONArray>() {
-        int indexCountry = 0;
+    final AsyncTask<String, Double, JSONArray> backgroundTask = new AsyncTask<String, Double, JSONArray>() {
+        URLStub urlStub = new URLStub();
+        int indexCountry;
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray updateMethod = null;
-            double[] unemploymentRate = new double[10];
+            unemploymentRate = new double[10];
+            String urlString = "http://api.worldbank.org/countries/ALB/indicators/SL.UEM.TOTL.ZS?per_page=3000&date=2004:2013&format=json";
+            int responseCode = 0;
 
-            String urlString = params[0];
-            String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
-            for (int i = 0; i < 50; i++) {
-                if (countryCode.equals(countryID[i])) {
-                    indexCountry = i;
-                    Log.d("COUNTRY CODE", countryCode + " was extracted and the index for this country is: " + String.valueOf(i));
+            HttpURLConnection connection = null;
+            responseCode = urlStub.getResponseCode();
+
+            if (responseCode != 200) {
+                urlStub.retrieveLocalData(retrieveIndex);
+                retrieveIndex++;
+            }
+            else {
+                String countryCode = Character.toString(urlString.charAt(35)) + Character.toString(urlString.charAt(36)) + Character.toString(urlString.charAt(37));
+                for (int i = 0; i < 50; i++){
+                    if (countryCode.equals(countryID[i])){
+                        indexCountry = i;
+                    }
+                }
+                indexCountry = 0;
+                countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
+
+                if (params.length != 1){
+                    return null;
+                }
+                downloadData = urlStub.callWebsite(urlString);
+                try {
+                    updateMethod = new JSONArray(downloadData);
+                    urlStub.updateArrays(updateMethod, indexCountry);
+                    return updateMethod;
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    Log.d("Catch Exception", "Error");
                 }
             }
-
-            countries[indexCountry] = new Country(countryNames[indexCountry], unemploymentRate);
-            Log.d("OBJECT CREATED", "Country object created for " + countries[indexCountry].getName());
-            if (params.length != 1) {
-                return null;
-            }
-            try {
-                URL url = new URL(params[0]);
-                InputStream is = url.openStream();
-                DataInputStream dataInputStream = new DataInputStream(is);
-                byte[] buffer = new byte[1024];
-                int bufferLength;
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                while ((bufferLength = dataInputStream.read(buffer)) > 0) {
-                    output.write(buffer, 0, bufferLength);
-                }
-                downloadData = output.toString();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            signal.countDown();
             return null;
         }
     };
+
+
+    /*
+
+    This needs to go somewhere but I'm not able to make it work. Once this works, I can start testing with assrtTrue,etc
+
+    runOnMainSync(new Runnable() {
+        @Override
+        public void run() {
+            backgroundTask.execute("Run");
+        }
+    });
+
     */
 }
